@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: go-redis
+  name: go-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-redis
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: go-redis
+    spec:
+      containers:
+      - image: mdshoaib707/go-app:ub2
+        name: go-redis
+        args:
+          - "/bin/sh"
+          - "-c"
+          - "./combi"
+        ports:
+          - containerPort: 8080
+        env:
+          - name: SERVER_REDIS
+            value: "redis-master.default.svc.cluster.local"
+          - name: SERVER_REDIS_PORT
+            value: "6379"
+        resources: {}
+status: {}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-redis
+spec:
+  type: NodePort
+  selector:
+    app: go-redis
+  ports:
+    - targetPort: 8080
+      port: 8080
